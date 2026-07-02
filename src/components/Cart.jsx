@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import CartItem from './CartItem';
@@ -6,6 +7,7 @@ import '../styles/Cart.css';
 const Cart = () => {
   const navigate = useNavigate();
   const cartItems = useSelector(state => state.cart.items);
+  const [showModal, setShowModal] = useState(false);
 
   const totalPlants = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const totalAmount = cartItems
@@ -13,7 +15,7 @@ const Cart = () => {
     .toFixed(2);
 
   const handleCheckout = () => {
-    alert('Coming Soon!');
+    setShowModal(true);
   };
 
   const handleContinueShopping = () => {
@@ -22,30 +24,20 @@ const Cart = () => {
 
   return (
     <div className="cart-container">
-      <h1 className="cart-heading">Shopping Cart</h1>
+      <h1 className="cart-heading">Your Shopping Cart</h1>
 
       {cartItems.length === 0 ? (
         <div className="empty-cart">
-          <p>Your cart is empty</p>
+          <div className="empty-cart-icon">🍃</div>
+          <p>Your garden is currently empty.</p>
           <button className="continue-shopping-btn" onClick={handleContinueShopping}>
-            Continue Shopping
+            Explore Our Plants
           </button>
         </div>
       ) : (
-        <>
-          <div className="cart-summary">
-            <div className="summary-item">
-              <span className="summary-label">Total Plants:</span>
-              <span className="summary-value">{totalPlants}</span>
-            </div>
-            <div className="summary-item">
-              <span className="summary-label">Total Amount:</span>
-              <span className="summary-value">${totalAmount}</span>
-            </div>
-          </div>
-
+        <div className="cart-content-layout">
           <div className="cart-items-section">
-            <h2>Items in Cart</h2>
+            <h2>Selected Plants ({totalPlants})</h2>
             <div className="cart-items-list">
               {cartItems.map(item => (
                 <CartItem key={item.id} item={item} />
@@ -53,15 +45,46 @@ const Cart = () => {
             </div>
           </div>
 
-          <div className="cart-actions">
-            <button className="continue-shopping-btn" onClick={handleContinueShopping}>
-              Continue Shopping
-            </button>
-            <button className="checkout-btn" onClick={handleCheckout}>
-              Checkout
+          <div className="cart-summary-card">
+            <h2>Order Summary</h2>
+            <div className="summary-details">
+              <div className="summary-row">
+                <span>Total Items:</span>
+                <span>{totalPlants} {totalPlants === 1 ? 'plant' : 'plants'}</span>
+              </div>
+              <div className="summary-row">
+                <span>Shipping:</span>
+                <span className="free-shipping">FREE</span>
+              </div>
+              <div className="summary-row grand-total">
+                <span>Total Amount:</span>
+                <span>${totalAmount}</span>
+              </div>
+            </div>
+            <div className="cart-actions">
+              <button className="continue-shopping-btn" onClick={handleContinueShopping}>
+                Continue Shopping
+              </button>
+              <button className="checkout-btn" onClick={handleCheckout}>
+                Checkout Order
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showModal && (
+        <div className="checkout-modal-overlay">
+          <div className="checkout-modal">
+            <div className="modal-icon">🎉</div>
+            <h2>Thank You for Your Order!</h2>
+            <p>Your order for {totalPlants} {totalPlants === 1 ? 'plant' : 'plants'} has been placed successfully.</p>
+            <p className="modal-subtext">We are preparing your green companions for shipment. A confirmation email has been sent!</p>
+            <button className="modal-close-btn" onClick={() => setShowModal(false)}>
+              Awesome
             </button>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

@@ -6,12 +6,9 @@ import Cart from './components/Cart';
 import './App.css';
 
 const AppContent = () => {
-  const location = useLocation();
-  const showHeader = location.pathname === '/products' || location.pathname === '/cart';
-
   return (
     <>
-      {showHeader && <Header />}
+      <Header />
       <Routes>
         <Route path="/" element={<AboutUs />} />
         <Route path="/products" element={<ProductList />} />
